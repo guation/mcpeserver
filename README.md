@@ -1,4 +1,4 @@
-https://github.com/guation/mcpeserver项目为https://github.com/codehz/mcpeserver的衍生项目
+https://github.com/guation/mcpeserver update for https://github.com/codehz/mcpeserver
 Minecraft Server Launcher
 =========================
 
