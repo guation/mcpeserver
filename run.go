@@ -149,26 +149,24 @@ func run(datapath, profile string, prompt *fasttemplate.Template) bool {
 		}
 	})
 	for {
+		command := `tail -n 1 default.log`
+		cmd := exec.Command("/bin/bash", "-c", command)
+		output, err := cmd.Output()
+		if err != nil {
+			fmt.Printf("挂神自动重启检测失败:%s", err.Error())
+			break
+		}else{
+			GT := string(output)
+			if strings.ContainsAny(GT,"F&dumper") {
+				cache++
+				execFn("console", "挂神自动崩服重启！")
+				return true
+			}
+		}
 		line, err := rl.Readline()
-		AutoRestart := false
 		if err == readline.ErrInterrupt {
 			if len(line) == 0 {
-				command := `tail -n 1 default.log`
-				cmd := exec.Command("/bin/bash", "-c", command)
-				output, err := cmd.Output()
-				if err != nil {
-					fmt.Printf("挂神自动重启检测失败:%s", err.Error())
-					break
-				}else{
-					GT := string(output)
-					if strings.ContainsAny(GT,"F&HYB") {
-						cache++
-						execFn("console", "挂神自动崩服重启！")
-						AutoRestart = true
-						continue
-					}
-				}
-				
+				break
 			} else {
 				continue
 			}
@@ -176,9 +174,6 @@ func run(datapath, profile string, prompt *fasttemplate.Template) bool {
 			break
 		}
 		line = strings.TrimSpace(line)
-		if AutoRestart {
-			line = ":restart"
-		}
 		switch {
 		case strings.HasPrefix(line, ":restart"):
 			return true
