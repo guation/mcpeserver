@@ -150,9 +150,25 @@ func run(datapath, profile string, prompt *fasttemplate.Template) bool {
 	})
 	for {
 		line, err := rl.Readline()
+		AutoRestart := false
 		if err == readline.ErrInterrupt {
 			if len(line) == 0 {
-				break
+				command := `tail -n 1 default.log`
+				cmd := exec.Command("/bin/bash", "-c", command)
+				output, err := cmd.Output()
+				if err != nil {
+					fmt.Printf("挂神自动重启检测失败:%s", err.Error())
+					break
+				}else{
+					GT := string(output)
+					if strings.ContainsAny(GT,"F&HYB") {
+						cache++
+						execFn("console", "挂神自动崩服重启！")
+						AutoRestart = true
+						continue
+					}
+				}
+				
 			} else {
 				continue
 			}
@@ -160,8 +176,8 @@ func run(datapath, profile string, prompt *fasttemplate.Template) bool {
 			break
 		}
 		line = strings.TrimSpace(line)
-		if regexp.MatchString("F #[\d]+ HYB",line) {
-		  line=":restart 挂神自动重启。"
+		if AutoRestart {
+			line = ":restart"
 		}
 		switch {
 		case strings.HasPrefix(line, ":restart"):
